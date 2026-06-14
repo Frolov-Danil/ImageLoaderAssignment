@@ -1,4 +1,5 @@
 import Foundation
+import ImageLoadingKit
 
 @MainActor
 protocol ImagesListBusinessLogic: AnyObject {

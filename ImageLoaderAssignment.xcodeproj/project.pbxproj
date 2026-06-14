@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B0EAB0012FDECA01009B209C /* ImageLoadingKit in Frameworks */ = {isa = PBXBuildFile; productRef = B0EAB0022FDECA01009B209C /* ImageLoadingKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B0EAAA802FDEB9EB009B209C /* ImageLoaderAssignment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageLoaderAssignment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0EAB0012FDECA01009B209C /* ImageLoadingKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = ImageLoaderAssignment;
 			packageProductDependencies = (
+				B0EAB0022FDECA01009B209C /* ImageLoadingKit */,
 			);
 			productName = ImageLoaderAssignment;
 			productReference = B0EAAA802FDEB9EB009B209C /* ImageLoaderAssignment.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = B0EAAA772FDEB9EB009B209C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B0EAB0032FDECA01009B209C /* XCLocalSwiftPackageReference "ImageLoadingKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B0EAAA812FDEB9EB009B209C /* Products */;
 			projectDirPath = "";
@@ -337,6 +346,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B0EAB0032FDECA01009B209C /* XCLocalSwiftPackageReference "ImageLoadingKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ImageLoadingKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B0EAB0022FDECA01009B209C /* ImageLoadingKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ImageLoadingKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B0EAAA782FDEB9EB009B209C /* Project object */;
 }

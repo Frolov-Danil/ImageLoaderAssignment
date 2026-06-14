@@ -28,7 +28,7 @@ final class ImagesListWorker: ImagesListWorking {
 
         guard let httpResponse = response as? HTTPURLResponse,
               200..<300 ~= httpResponse.statusCode else {
-            throw ImageLoadingError.invalidResponse
+            throw ImagesListWorkerError.invalidResponse
         }
 
         return try decoder
@@ -57,4 +57,8 @@ private struct ImageDTO: Decodable {
 
         url = try container.decode(URL.self, forKey: .url)
     }
+}
+
+private enum ImagesListWorkerError: Error {
+    case invalidResponse
 }

@@ -1,16 +1,16 @@
 import UIKit
 
-protocol ImageLoading: ImageCacheInvalidating {
+public protocol ImageLoading: ImageCacheInvalidating {
     func image(for url: URL) async throws -> UIImage
 }
 
-protocol ImageCacheInvalidating: AnyObject {
+public protocol ImageCacheInvalidating: AnyObject {
     func invalidateCache() async
     func invalidateCache(for url: URL) async
 }
 
-final class ImagePipeline: ImageLoading {
-    static let shared = ImagePipeline()
+public final class ImagePipeline: ImageLoading {
+    public static let shared = ImagePipeline()
 
     private let downloader: ImageDownloading
     private let cache: ImageCache
@@ -26,7 +26,7 @@ final class ImagePipeline: ImageLoading {
         self.cache = cache
     }
 
-    func image(for url: URL) async throws -> UIImage {
+    public func image(for url: URL) async throws -> UIImage {
         if let cachedData = await cache.data(for: url),
            let cachedImage = UIImage(data: cachedData) {
             return cachedImage
@@ -42,11 +42,11 @@ final class ImagePipeline: ImageLoading {
         return image
     }
 
-    func invalidateCache() async {
+    public func invalidateCache() async {
         await cache.removeAllData()
     }
 
-    func invalidateCache(for url: URL) async {
+    public func invalidateCache(for url: URL) async {
         await cache.removeData(for: url)
     }
 }

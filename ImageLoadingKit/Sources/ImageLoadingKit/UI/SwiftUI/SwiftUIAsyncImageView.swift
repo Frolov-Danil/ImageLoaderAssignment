@@ -1,12 +1,12 @@
 import SwiftUI
 
-struct SwiftUIAsyncImageView<Placeholder: View>: View {
+public struct SwiftUIAsyncImageView<Placeholder: View>: View {
     private let url: URL?
     private let placeholder: Placeholder
 
     @State private var image: UIImage?
 
-    init(
+    public init(
         url: URL?,
         @ViewBuilder placeholder: () -> Placeholder
     ) {
@@ -14,7 +14,7 @@ struct SwiftUIAsyncImageView<Placeholder: View>: View {
         self.placeholder = placeholder()
     }
 
-    var body: some View {
+    public var body: some View {
         Group {
             if let image {
                 Image(uiImage: image)

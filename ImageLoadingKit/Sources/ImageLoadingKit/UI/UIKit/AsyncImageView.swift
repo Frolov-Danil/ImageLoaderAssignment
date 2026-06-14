@@ -1,17 +1,17 @@
 import UIKit
 
-final class AsyncImageView: UIImageView {
+public final class AsyncImageView: UIImageView {
     private let imageLoader: ImageLoading
     private var loadingTask: Task<Void, Never>?
     private var representedURL: URL?
 
-    init(imageLoader: ImageLoading = ImagePipeline.shared) {
+    public init(imageLoader: ImageLoading = ImagePipeline.shared) {
         self.imageLoader = imageLoader
         super.init(frame: .zero)
         configureView()
     }
 
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         self.imageLoader = ImagePipeline.shared
         super.init(coder: coder)
         configureView()
@@ -21,7 +21,7 @@ final class AsyncImageView: UIImageView {
         loadingTask?.cancel()
     }
 
-    func setImage(from url: URL?, placeholder: UIImage? = nil) {
+    public func setImage(from url: URL?, placeholder: UIImage? = nil) {
         loadingTask?.cancel()
         representedURL = url
         image = placeholder
@@ -45,7 +45,7 @@ final class AsyncImageView: UIImageView {
         }
     }
 
-    func cancelLoading() {
+    public func cancelLoading() {
         loadingTask?.cancel()
         loadingTask = nil
         representedURL = nil

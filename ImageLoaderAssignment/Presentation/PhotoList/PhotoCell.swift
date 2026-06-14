@@ -40,7 +40,10 @@ final class PhotoCell: UITableViewCell {
 
 private extension PhotoCell {
     func configureView() {
+        backgroundColor = .systemBackground
         selectionStyle = .none
+        separatorInset = Constants.separatorInset
+        contentView.directionalLayoutMargins = Constants.contentMargins
 
         configureThumbnailImageView()
         configureLabels()
@@ -49,13 +52,14 @@ private extension PhotoCell {
 
     func configureThumbnailImageView() {
         thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
-        thumbnailImageView.backgroundColor = .secondarySystemBackground
-        thumbnailImageView.layer.cornerRadius = 8
+        thumbnailImageView.backgroundColor = .tertiarySystemFill
+        thumbnailImageView.tintColor = .tertiaryLabel
+        thumbnailImageView.layer.cornerRadius = Constants.thumbnailCornerRadius
         thumbnailImageView.layer.masksToBounds = true
 
         NSLayoutConstraint.activate([
-            thumbnailImageView.widthAnchor.constraint(equalToConstant: 72),
-            thumbnailImageView.heightAnchor.constraint(equalToConstant: 72)
+            thumbnailImageView.widthAnchor.constraint(equalToConstant: Constants.thumbnailSize),
+            thumbnailImageView.heightAnchor.constraint(equalToConstant: Constants.thumbnailSize)
         ])
     }
 
@@ -63,38 +67,56 @@ private extension PhotoCell {
         idLabel.font = .preferredFont(forTextStyle: .headline)
         idLabel.textColor = .label
         idLabel.numberOfLines = 1
+        idLabel.adjustsFontForContentSizeCategory = true
 
         urlLabel.font = .preferredFont(forTextStyle: .subheadline)
         urlLabel.textColor = .secondaryLabel
         urlLabel.numberOfLines = 2
         urlLabel.lineBreakMode = .byTruncatingMiddle
+        urlLabel.adjustsFontForContentSizeCategory = true
     }
 
     func configureStackViews() {
         textStackView.axis = .vertical
         textStackView.alignment = .fill
-        textStackView.spacing = 4
+        textStackView.spacing = Constants.textSpacing
         textStackView.addArrangedSubview(idLabel)
         textStackView.addArrangedSubview(urlLabel)
 
         containerStackView.translatesAutoresizingMaskIntoConstraints = false
         containerStackView.axis = .horizontal
         containerStackView.alignment = .center
-        containerStackView.spacing = 12
+        containerStackView.spacing = Constants.contentSpacing
         containerStackView.addArrangedSubview(thumbnailImageView)
         containerStackView.addArrangedSubview(textStackView)
 
         contentView.addSubview(containerStackView)
 
         NSLayoutConstraint.activate([
-            containerStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+            containerStackView.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
             containerStackView.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
             containerStackView.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
-            containerStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12)
+            containerStackView.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor)
         ])
     }
 
     enum Constants {
-        static let placeholderImage = UIImage(systemName: "photo")
+        static let placeholderImage = UIImage(systemName: "photo.fill")
+        static let thumbnailSize: CGFloat = 80
+        static let thumbnailCornerRadius: CGFloat = 8
+        static let textSpacing: CGFloat = 4
+        static let contentSpacing: CGFloat = 12
+        static let contentMargins = NSDirectionalEdgeInsets(
+            top: 12,
+            leading: 16,
+            bottom: 12,
+            trailing: 16
+        )
+        static let separatorInset = UIEdgeInsets(
+            top: 0,
+            left: 108,
+            bottom: 0,
+            right: 16
+        )
     }
 }

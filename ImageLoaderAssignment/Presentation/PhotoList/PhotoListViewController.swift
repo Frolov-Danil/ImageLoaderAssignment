@@ -31,8 +31,10 @@ final class PhotoListViewController: UIViewController {
 
 private extension PhotoListViewController {
     func configureView() {
-        title = "Images"
+        title = "Photos"
         view.backgroundColor = .systemBackground
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .automatic
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "trash"),
@@ -52,6 +54,9 @@ private extension PhotoListViewController {
         tableView.dataSource = self
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 96
+        tableView.backgroundColor = .systemBackground
+        tableView.separatorInset = Constants.separatorInset
+        tableView.tableFooterView = UIView()
         tableView.register(PhotoCell.self, forCellReuseIdentifier: Constants.cellIdentifier)
 
         view.addSubview(tableView)
@@ -134,6 +139,8 @@ private extension PhotoListViewController {
     }
 
     func showCacheClearedAlert(message: String) {
+        navigationItem.rightBarButtonItem?.isEnabled = true
+
         let alert = UIAlertController(
             title: nil,
             message: message,
@@ -145,11 +152,18 @@ private extension PhotoListViewController {
 
     @objc
     func didTapClearCacheButton() {
+        navigationItem.rightBarButtonItem?.isEnabled = false
         viewModel.clearCache()
     }
 
     enum Constants {
         static let cellIdentifier = "PhotoCell"
+        static let separatorInset = UIEdgeInsets(
+            top: 0,
+            left: 108,
+            bottom: 0,
+            right: 16
+        )
     }
 }
 

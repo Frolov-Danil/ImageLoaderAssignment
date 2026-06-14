@@ -1,30 +1,35 @@
 import UIKit
 
-@MainActor
-protocol ImagesListDisplayLogic: AnyObject {
-    func displayImages(viewModel: ImagesList.LoadImages.ViewModel)
-    func displayCacheCleared(viewModel: ImagesList.ClearCache.ViewModel)
-}
-
-final class ImagesListViewController: UIViewController {
-    var interactor: ImagesListBusinessLogic?
+final class PhotoListViewController: UIViewController {
+    private let viewModel: PhotoListViewModel
 
     private let tableView = UITableView(frame: .zero, style: .plain)
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private let emptyStateLabel = UILabel()
 
-    private var displayedImages: [ImagesList.DisplayedImage] = []
+    private var photos: [PhotoCellViewModel] = []
+
+    init(viewModel: PhotoListViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        interactor?.loadImages(request: .init())
+        bindViewModel()
+        viewModel.loadPhotos()
     }
 }
 
 // MARK: - Private
 
-private extension ImagesListViewController {
+private extension PhotoListViewController {
     func configureView() {
         title = "Images"
         view.backgroundColor = .systemBackground
@@ -46,8 +51,8 @@ private extension ImagesListViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 72
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: Constants.cellIdentifier)
+        tableView.estimatedRowHeight = 96
+        tableView.register(PhotoCell.self, forCellReuseIdentifier: Constants.cellIdentifier)
 
         view.addSubview(tableView)
 
@@ -88,63 +93,71 @@ private extension ImagesListViewController {
         ])
     }
 
-    @objc
-    func didTapClearCacheButton() {
-        interactor?.clearCache(request: .init())
-    }
+    func bindViewModel() {
+        viewModel.onStateChange = { [weak self] state in
+            self?.render(state)
+        }
 
-    private enum Constants {
-        static let cellIdentifier = "ImageCell"
-    }
-}
-
-// MARK: - ImagesListDisplayLogic
-
-extension ImagesListViewController: ImagesListDisplayLogic {
-    func displayImages(viewModel: ImagesList.LoadImages.ViewModel) {
-        switch viewModel.state {
-        case .loading:
-            emptyStateLabel.isHidden = true
-            activityIndicator.startAnimating()
-
-        case let .content(images):
-            activityIndicator.stopAnimating()
-            emptyStateLabel.isHidden = true
-            displayedImages = images
-            tableView.reloadData()
-
-        case .empty:
-            activityIndicator.stopAnimating()
-            displayedImages = []
-            tableView.reloadData()
-            emptyStateLabel.text = "No images available yet."
-            emptyStateLabel.isHidden = false
-
-        case let .error(message):
-            activityIndicator.stopAnimating()
-            displayedImages = []
-            tableView.reloadData()
-            emptyStateLabel.text = message
-            emptyStateLabel.isHidden = false
+        viewModel.onCacheCleared = { [weak self] message in
+            self?.showCacheClearedAlert(message: message)
         }
     }
 
-    func displayCacheCleared(viewModel: ImagesList.ClearCache.ViewModel) {
+    func render(_ state: PhotoListState) {
+        switch state {
+        case .loading:
+            photos = []
+            tableView.reloadData()
+            emptyStateLabel.isHidden = true
+            activityIndicator.startAnimating()
+
+        case let .content(photos):
+            self.photos = photos
+            tableView.reloadData()
+            emptyStateLabel.isHidden = true
+            activityIndicator.stopAnimating()
+
+        case .empty:
+            photos = []
+            tableView.reloadData()
+            emptyStateLabel.text = "No images available yet."
+            emptyStateLabel.isHidden = false
+            activityIndicator.stopAnimating()
+
+        case let .error(message):
+            photos = []
+            tableView.reloadData()
+            emptyStateLabel.text = message
+            emptyStateLabel.isHidden = false
+            activityIndicator.stopAnimating()
+        }
+    }
+
+    func showCacheClearedAlert(message: String) {
         let alert = UIAlertController(
             title: nil,
-            message: viewModel.message,
+            message: message,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }
+
+    @objc
+    func didTapClearCacheButton() {
+        viewModel.clearCache()
+    }
+
+    enum Constants {
+        static let cellIdentifier = "PhotoCell"
+    }
 }
 
 // MARK: - UITableViewDataSource
 
-extension ImagesListViewController: UITableViewDataSource {
+extension PhotoListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        displayedImages.count
+        photos.count
     }
 
     func tableView(
@@ -155,15 +168,12 @@ extension ImagesListViewController: UITableViewDataSource {
             withIdentifier: Constants.cellIdentifier,
             for: indexPath
         )
-        let image = displayedImages[indexPath.row]
 
-        var content = cell.defaultContentConfiguration()
-        content.text = image.id
-        content.secondaryText = image.subtitle
-        content.secondaryTextProperties.numberOfLines = 2
-        cell.contentConfiguration = content
-        cell.selectionStyle = .none
+        guard let photoCell = cell as? PhotoCell else {
+            return cell
+        }
 
-        return cell
+        photoCell.configure(with: photos[indexPath.row])
+        return photoCell
     }
 }

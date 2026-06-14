@@ -5,8 +5,12 @@ Small iOS assignment project for downloading, caching, and displaying remote ima
 ## Architecture
 
 - `ImageLoadingKit` is a local Swift Package that contains the reusable image loading layer.
-- `Scenes/ImagesList` uses a lightweight Clean Swift flow: ViewController -> Interactor -> Worker -> Presenter -> ViewController.
-- UIKit is used for the example app to keep the Clean Swift boundaries explicit.
+- The demo app uses MVVM with a lightweight Clean Architecture approach.
+- `Presentation` contains UIKit screens, cells, view models, and display state.
+- `Domain` contains app business models, repository contracts, and use cases.
+- `Data` contains URLSession networking, DTOs, mappers, and repository implementations.
+- `App` acts as the composition root and wires concrete dependencies together.
+- UIKit is used for the example app, while the image loading SDK remains independent and reusable.
 - UIKit and SwiftUI entry points are exposed by the package.
 - The image pipeline is actor-isolated and deduplicates concurrent requests for the same URL.
 - The cache uses memory + disk layers and stores disk metadata with a default 4-hour expiration.

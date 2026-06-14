@@ -20,14 +20,29 @@ final class PhotoAPIClient {
             return []
         }
 
-        let (data, response) = try await session.data(from: photoListURL)
+        let data = try await data(from: photoListURL)
+        return try decoder.decode([PhotoDTO].self, from: data)
+    }
+}
 
+// MARK: - Private
+
+private extension PhotoAPIClient {
+    func data(from url: URL) async throws -> Data {
+        if url.isFileURL {
+            return try Data(contentsOf: url)
+        }
+
+        let (data, response) = try await session.data(from: url)
+        try validate(response)
+        return data
+    }
+
+    func validate(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse,
               (200..<300).contains(httpResponse.statusCode) else {
             throw PhotoAPIClientError.invalidResponse
         }
-
-        return try decoder.decode([PhotoDTO].self, from: data)
     }
 }
 

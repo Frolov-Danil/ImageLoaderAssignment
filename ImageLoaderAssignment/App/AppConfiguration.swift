@@ -1,5 +1,7 @@
 import Foundation
 
 enum AppConfiguration {
-    static let imageListURL: URL? = nil
+    static var imageListURL: URL? {
+        Bundle.main.url(forResource: "photos", withExtension: "json")
+    }
 }

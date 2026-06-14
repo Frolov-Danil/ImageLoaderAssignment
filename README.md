@@ -20,8 +20,8 @@ Small iOS assignment project for downloading, caching, and displaying remote ima
 
 - `main` keeps the stable assignment state.
 - `develop` is the integration branch.
-- Feature work is done in `feature/*` branches.
+- Branch prefixes are chosen by change type: `feature/*`, `refactor/*`, `fix/*`, or `chore/*`.
 
 ## Notes
 
-The assignment archive did not include a JSON endpoint. The app keeps it isolated in `AppConfiguration.imageListURL` so it can be set in one place once the endpoint is known.
+The assignment archive did not include a JSON endpoint, so the demo app uses a bundled `photos.json` file with the expected `id` and `url` schema. `PhotoAPIClient` still supports remote HTTP JSON sources, and the data source remains isolated in `AppConfiguration.imageListURL`.

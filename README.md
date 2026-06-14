@@ -8,7 +8,7 @@ Small iOS assignment project for downloading, caching, and displaying remote ima
 - The demo app uses MVVM with a lightweight Clean Architecture approach.
 - `Presentation` contains UIKit screens, cells, view models, and display state.
 - `Domain` contains app business models, repository contracts, and use cases.
-- `Data` contains URLSession networking, DTOs, mappers, and repository implementations.
+- `Data` contains generic endpoint-based networking, DTOs, mappers, and repository implementations.
 - `App` acts as the composition root and wires concrete dependencies together.
 - UIKit is used for the example app, while the image loading SDK remains independent and reusable.
 - UIKit and SwiftUI entry points are exposed by the package.
@@ -24,4 +24,4 @@ Small iOS assignment project for downloading, caching, and displaying remote ima
 
 ## Notes
 
-The assignment archive did not include a JSON endpoint, so the demo app uses a bundled `photos.json` file with the expected `id` and `url` schema. `PhotoAPIClient` still supports remote HTTP JSON sources, and the data source remains isolated in `AppConfiguration.imageListURL`.
+The assignment archive did not include a JSON endpoint, so the demo app uses a bundled `photos.json` file with the expected `id` and `url` schema. `APIClient` still supports remote HTTP JSON sources, and the data source remains isolated in `AppConfiguration.imageListURL`.

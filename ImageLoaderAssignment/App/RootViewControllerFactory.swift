@@ -3,8 +3,11 @@ import UIKit
 @MainActor
 enum RootViewControllerFactory {
     static func makeRootViewController() -> UIViewController {
-        let apiClient = PhotoAPIClient(photoListURL: AppConfiguration.imageListURL)
-        let repository = RemotePhotoRepository(apiClient: apiClient)
+        let apiClient = APIClient()
+        let repository = RemotePhotoRepository(
+            apiClient: apiClient,
+            photoListURL: AppConfiguration.imageListURL
+        )
         let fetchPhotosUseCase = FetchPhotosUseCase(repository: repository)
         let imageCache = ImageLoadingKitCacheAdapter()
         let clearImageCacheUseCase = ClearImageCacheUseCase(imageCache: imageCache)

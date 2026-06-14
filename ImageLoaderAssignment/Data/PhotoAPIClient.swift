@@ -23,7 +23,7 @@ final class PhotoAPIClient {
         let (data, response) = try await session.data(from: photoListURL)
 
         guard let httpResponse = response as? HTTPURLResponse,
-              200..<300 ~= httpResponse.statusCode else {
+              (200..<300).contains(httpResponse.statusCode) else {
             throw PhotoAPIClientError.invalidResponse
         }
 

@@ -20,8 +20,12 @@ final class ImagesListViewController: UIViewController {
         configureView()
         interactor?.loadImages(request: .init())
     }
+}
 
-    private func configureView() {
+// MARK: - Private
+
+private extension ImagesListViewController {
+    func configureView() {
         title = "Images"
         view.backgroundColor = .systemBackground
 
@@ -38,7 +42,7 @@ final class ImagesListViewController: UIViewController {
         configureEmptyStateLabel()
     }
 
-    private func configureTableView() {
+    func configureTableView() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.rowHeight = UITableView.automaticDimension
@@ -55,7 +59,7 @@ final class ImagesListViewController: UIViewController {
         ])
     }
 
-    private func configureActivityIndicator() {
+    func configureActivityIndicator() {
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
 
@@ -67,7 +71,7 @@ final class ImagesListViewController: UIViewController {
         ])
     }
 
-    private func configureEmptyStateLabel() {
+    func configureEmptyStateLabel() {
         emptyStateLabel.translatesAutoresizingMaskIntoConstraints = false
         emptyStateLabel.font = .preferredFont(forTextStyle: .body)
         emptyStateLabel.textAlignment = .center
@@ -85,7 +89,7 @@ final class ImagesListViewController: UIViewController {
     }
 
     @objc
-    private func didTapClearCacheButton() {
+    func didTapClearCacheButton() {
         interactor?.clearCache(request: .init())
     }
 

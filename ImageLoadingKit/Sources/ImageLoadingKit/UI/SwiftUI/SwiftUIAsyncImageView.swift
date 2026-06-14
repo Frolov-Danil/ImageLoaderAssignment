@@ -27,9 +27,13 @@ public struct SwiftUIAsyncImageView<Placeholder: View>: View {
             await loadImage()
         }
     }
+}
 
+// MARK: - Private
+
+private extension SwiftUIAsyncImageView {
     @MainActor
-    private func loadImage() async {
+    func loadImage() async {
         image = nil
 
         guard let url else {

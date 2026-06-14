@@ -50,8 +50,12 @@ public final class AsyncImageView: UIImageView {
         loadingTask = nil
         representedURL = nil
     }
+}
 
-    private func configureView() {
+// MARK: - Private
+
+private extension AsyncImageView {
+    func configureView() {
         clipsToBounds = true
         contentMode = .scaleAspectFill
     }

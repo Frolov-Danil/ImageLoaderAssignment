@@ -51,8 +51,12 @@ final class DiskImageCache: ImageCache {
     func removeAllImages() async {
         try? fileManager.removeItem(at: directoryURL)
     }
+}
 
-    private func metadata(for url: URL) -> CachedImageMetadata? {
+// MARK: - Private
+
+private extension DiskImageCache {
+    func metadata(for url: URL) -> CachedImageMetadata? {
         guard let data = try? Data(contentsOf: metadataFileURL(for: url)) else {
             return nil
         }
@@ -60,15 +64,15 @@ final class DiskImageCache: ImageCache {
         return try? decoder.decode(CachedImageMetadata.self, from: data)
     }
 
-    private func dataFileURL(for url: URL) -> URL {
+    func dataFileURL(for url: URL) -> URL {
         directoryURL.appendingPathComponent("\(cacheKey(for: url)).data")
     }
 
-    private func metadataFileURL(for url: URL) -> URL {
+    func metadataFileURL(for url: URL) -> URL {
         directoryURL.appendingPathComponent("\(cacheKey(for: url)).metadata.json")
     }
 
-    private func cacheKey(for url: URL) -> String {
+    func cacheKey(for url: URL) -> String {
         let digest = SHA256.hash(data: Data(url.absoluteString.utf8))
         return digest.map { String(format: "%02x", $0) }.joined()
     }

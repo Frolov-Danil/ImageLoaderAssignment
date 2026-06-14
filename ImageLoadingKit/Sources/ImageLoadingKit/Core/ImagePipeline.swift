@@ -79,8 +79,12 @@ public actor ImagePipeline: ImageLoading {
         inFlightTasks[url] = nil
         await cache.removeImage(for: url)
     }
+}
 
-    private func makeDownloadTask(for url: URL) -> Task<UIImage, Error> {
+// MARK: - Private
+
+private extension ImagePipeline {
+    func makeDownloadTask(for url: URL) -> Task<UIImage, Error> {
         Task {
             let data = try await downloader.data(from: url)
 

@@ -14,8 +14,6 @@ final class PhotoCell: UITableViewCell {
             placeholder: Constants.placeholderImage
         )
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .tertiarySystemFill
-        imageView.tintColor = .tertiaryLabel
         imageView.layer.cornerRadius = Constants.thumbnailCornerRadius
         imageView.layer.masksToBounds = true
         return imageView
@@ -126,13 +124,61 @@ private extension PhotoCell {
     }
 }
 
+// MARK: - Placeholder
+
+private extension PhotoCell {
+    static func makePlaceholderImage() -> UIImage? {
+        let size = CGSize(
+            width: Constants.thumbnailSize,
+            height: Constants.thumbnailSize
+        )
+        let bounds = CGRect(origin: .zero, size: size)
+        let renderer = UIGraphicsImageRenderer(size: size)
+
+        return renderer.image { _ in
+            let backgroundPath = UIBezierPath(
+                roundedRect: bounds,
+                cornerRadius: Constants.thumbnailCornerRadius
+            )
+            UIColor.tertiarySystemFill.setFill()
+            backgroundPath.fill()
+
+            UIColor.separator.withAlphaComponent(0.35).setStroke()
+            backgroundPath.lineWidth = Constants.placeholderBorderWidth
+            backgroundPath.stroke()
+
+            let configuration = UIImage.SymbolConfiguration(
+                pointSize: Constants.placeholderIconSize,
+                weight: .regular
+            )
+            let icon = UIImage(
+                systemName: Constants.placeholderIconName,
+                withConfiguration: configuration
+            )?.withTintColor(.tertiaryLabel, renderingMode: .alwaysOriginal)
+
+            guard let icon else {
+                return
+            }
+
+            let iconOrigin = CGPoint(
+                x: bounds.midX - icon.size.width / 2,
+                y: bounds.midY - icon.size.height / 2
+            )
+            icon.draw(at: iconOrigin)
+        }
+    }
+}
+
 // MARK: - Constants
 
 private extension PhotoCell {
     enum Constants {
-        static let placeholderImage = UIImage(systemName: "photo.fill")
+        static let placeholderImage = PhotoCell.makePlaceholderImage()
         static let thumbnailSize: CGFloat = 80
         static let thumbnailCornerRadius: CGFloat = 8
+        static let placeholderIconName = "photo"
+        static let placeholderIconSize: CGFloat = 24
+        static let placeholderBorderWidth: CGFloat = 1
         static let textSpacing: CGFloat = 4
         static let contentSpacing: CGFloat = 12
         static let contentMargins = NSDirectionalEdgeInsets(

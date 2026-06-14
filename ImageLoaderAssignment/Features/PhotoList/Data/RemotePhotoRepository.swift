@@ -1,6 +1,6 @@
 import Foundation
 
-final class RemotePhotoRepository: PhotoRepository {
+final class RemotePhotoRepository: PhotoRepositoryProtocol {
     private let apiClient: APIClient
     private let photoListURL: URL?
 

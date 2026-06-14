@@ -1,13 +1,13 @@
 import ImageLoadingKit
 
-final class ImageLoadingKitCacheAdapter: ImageCacheClearing {
-    private let cacheInvalidator: ImageCacheInvalidating
+final class ImageLoadingKitCacheAdapter: ImageCacheClearingProtocol {
+    private let imagePipeline: ImagePipeline
 
-    init(cacheInvalidator: ImageCacheInvalidating = ImagePipeline.shared) {
-        self.cacheInvalidator = cacheInvalidator
+    init(imagePipeline: ImagePipeline = ImagePipeline.shared) {
+        self.imagePipeline = imagePipeline
     }
 
     func clearCache() async {
-        await cacheInvalidator.invalidateCache()
+        await imagePipeline.invalidateCache()
     }
 }

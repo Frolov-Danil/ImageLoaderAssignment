@@ -6,9 +6,8 @@ Small iOS assignment project for downloading, caching, and displaying remote ima
 
 - `ImageLoadingKit` is a local Swift Package that contains the reusable image loading layer.
 - The demo app uses MVVM with a lightweight Clean Architecture approach.
-- `Presentation` contains UIKit screens, cells, view models, and display state.
-- `Domain` contains app business models, repository contracts, and use cases.
-- `Data` contains generic endpoint-based networking, DTOs, mappers, and repository implementations.
+- `Core` contains reusable app infrastructure such as endpoint-based networking.
+- `Features/PhotoList` contains the feature-specific Presentation, Domain, and Data layers.
 - `App` acts as the composition root and wires concrete dependencies together.
 - UIKit is used for the example app, while the image loading SDK remains independent and reusable.
 - UIKit and SwiftUI entry points are exposed by the package.

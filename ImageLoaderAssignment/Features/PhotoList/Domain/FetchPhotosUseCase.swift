@@ -1,7 +1,7 @@
 struct FetchPhotosUseCase {
-    private let repository: PhotoRepository
+    private let repository: PhotoRepositoryProtocol
 
-    init(repository: PhotoRepository) {
+    init(repository: PhotoRepositoryProtocol) {
         self.repository = repository
     }
 

@@ -1,10 +1,6 @@
 import Foundation
 
-protocol ImageDownloading {
-    func data(from url: URL) async throws -> Data
-}
-
-final class URLSessionImageDownloader: ImageDownloading {
+final class URLSessionImageDownloader: ImageDownloadingProtocol {
     private let session: URLSession
 
     init(session: URLSession = .shared) {
@@ -15,10 +11,18 @@ final class URLSessionImageDownloader: ImageDownloading {
         let (data, response) = try await session.data(from: url)
 
         guard let httpResponse = response as? HTTPURLResponse,
-              (200..<300).contains(httpResponse.statusCode) else {
+              Constants.successStatusCodes.contains(httpResponse.statusCode) else {
             throw ImageLoadingError.invalidResponse
         }
 
         return data
+    }
+}
+
+// MARK: - Constants
+
+private extension URLSessionImageDownloader {
+    enum Constants {
+        static let successStatusCodes = 200..<300
     }
 }

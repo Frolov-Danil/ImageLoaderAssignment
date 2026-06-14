@@ -33,12 +33,16 @@ private extension APIClient {
 
     func validate(_ response: URLResponse) throws {
         guard let httpResponse = response as? HTTPURLResponse,
-              (200..<300).contains(httpResponse.statusCode) else {
+              Constants.successStatusCodes.contains(httpResponse.statusCode) else {
             throw APIClientError.invalidResponse
         }
     }
 }
 
-enum APIClientError: Error {
-    case invalidResponse
+// MARK: - Constants
+
+private extension APIClient {
+    enum Constants {
+        static let successStatusCodes = 200..<300
+    }
 }

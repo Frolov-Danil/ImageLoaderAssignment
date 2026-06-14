@@ -105,7 +105,11 @@ private extension PhotoCell {
             containerStackView.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor)
         ])
     }
+}
 
+// MARK: - Constants
+
+private extension PhotoCell {
     enum Constants {
         static let placeholderImage = UIImage(systemName: "photo.fill")
         static let thumbnailSize: CGFloat = 80

@@ -31,18 +31,18 @@ final class PhotoListViewController: UIViewController {
 
 private extension PhotoListViewController {
     func configureView() {
-        title = "Photos"
+        title = Constants.title
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.largeTitleDisplayMode = .automatic
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "trash"),
+            image: UIImage(systemName: Constants.clearCacheImageName),
             style: .plain,
             target: self,
             action: #selector(didTapClearCacheButton)
         )
-        navigationItem.rightBarButtonItem?.accessibilityLabel = "Clear cache"
+        navigationItem.rightBarButtonItem?.accessibilityLabel = Constants.clearCacheAccessibilityLabel
 
         configureTableView()
         configureActivityIndicator()
@@ -53,7 +53,7 @@ private extension PhotoListViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 96
+        tableView.estimatedRowHeight = Constants.estimatedRowHeight
         tableView.backgroundColor = .systemBackground
         tableView.separatorInset = Constants.separatorInset
         tableView.tableFooterView = UIView()
@@ -122,10 +122,10 @@ private extension PhotoListViewController {
             emptyStateLabel.isHidden = true
             activityIndicator.stopAnimating()
 
-        case .empty:
+        case let .empty(message):
             photos = []
             tableView.reloadData()
-            emptyStateLabel.text = "No images available yet."
+            emptyStateLabel.text = message
             emptyStateLabel.isHidden = false
             activityIndicator.stopAnimating()
 
@@ -146,7 +146,7 @@ private extension PhotoListViewController {
             message: message,
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(title: Constants.alertConfirmationTitle, style: .default))
         present(alert, animated: true)
     }
 
@@ -154,16 +154,6 @@ private extension PhotoListViewController {
     func didTapClearCacheButton() {
         navigationItem.rightBarButtonItem?.isEnabled = false
         viewModel.clearCache()
-    }
-
-    enum Constants {
-        static let cellIdentifier = "PhotoCell"
-        static let separatorInset = UIEdgeInsets(
-            top: 0,
-            left: 108,
-            bottom: 0,
-            right: 16
-        )
     }
 }
 
@@ -189,5 +179,24 @@ extension PhotoListViewController: UITableViewDataSource {
 
         photoCell.configure(with: photos[indexPath.row])
         return photoCell
+    }
+}
+
+// MARK: - Constants
+
+private extension PhotoListViewController {
+    enum Constants {
+        static let title = "Photos"
+        static let clearCacheImageName = "trash"
+        static let clearCacheAccessibilityLabel = "Clear cache"
+        static let alertConfirmationTitle = "OK"
+        static let cellIdentifier = "PhotoCell"
+        static let estimatedRowHeight: CGFloat = 96
+        static let separatorInset = UIEdgeInsets(
+            top: 0,
+            left: 108,
+            bottom: 0,
+            right: 16
+        )
     }
 }

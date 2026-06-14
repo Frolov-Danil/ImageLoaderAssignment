@@ -41,13 +41,18 @@ final class PhotoListViewModel {
                 }
 
                 let cellViewStates = makeCellViewStates(from: photos)
-                onStateChange?(cellViewStates.isEmpty ? .empty : .content(cellViewStates))
+
+                if cellViewStates.isEmpty {
+                    onStateChange?(.empty(message: Constants.emptyStateMessage))
+                } else {
+                    onStateChange?(.content(cellViewStates))
+                }
             } catch {
                 guard !Task.isCancelled else {
                     return
                 }
 
-                onStateChange?(.error(message: "Failed to load images."))
+                onStateChange?(.error(message: Constants.loadingErrorMessage))
             }
         }
     }
@@ -66,7 +71,7 @@ final class PhotoListViewModel {
                 return
             }
 
-            onCacheCleared?("Image cache cleared.")
+            onCacheCleared?(Constants.cacheClearedMessage)
         }
     }
 }
@@ -82,5 +87,15 @@ private extension PhotoListViewModel {
                 subtitle: $0.url.absoluteString
             )
         }
+    }
+}
+
+// MARK: - Constants
+
+private extension PhotoListViewModel {
+    enum Constants {
+        static let emptyStateMessage = "No images available yet."
+        static let loadingErrorMessage = "Failed to load images."
+        static let cacheClearedMessage = "Image cache cleared."
     }
 }

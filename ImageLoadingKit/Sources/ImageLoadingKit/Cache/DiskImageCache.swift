@@ -1,7 +1,7 @@
 import CryptoKit
 import Foundation
 
-final class DiskImageCache: ImageCache {
+final class DiskImageCache: ImageCacheProtocol {
     private let directoryURL: URL
     private let fileManager: FileManager
     private let decoder = JSONDecoder()
@@ -14,7 +14,7 @@ final class DiskImageCache: ImageCache {
         self.fileManager = fileManager
         self.directoryURL = directoryURL ?? fileManager
             .urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("ImageLoadingKit", isDirectory: true)
+            .appendingPathComponent(Constants.cacheDirectoryName, isDirectory: true)
     }
 
     func cachedImage(for url: URL, now: Date) async -> CachedImage? {
@@ -56,24 +56,34 @@ final class DiskImageCache: ImageCache {
 // MARK: - Private
 
 private extension DiskImageCache {
-    func metadata(for url: URL) -> CachedImageMetadata? {
+    func metadata(for url: URL) -> CachedImage.Metadata? {
         guard let data = try? Data(contentsOf: metadataFileURL(for: url)) else {
             return nil
         }
 
-        return try? decoder.decode(CachedImageMetadata.self, from: data)
+        return try? decoder.decode(CachedImage.Metadata.self, from: data)
     }
 
     func dataFileURL(for url: URL) -> URL {
-        directoryURL.appendingPathComponent("\(cacheKey(for: url)).data")
+        directoryURL.appendingPathComponent("\(cacheKey(for: url)).\(Constants.dataFileExtension)")
     }
 
     func metadataFileURL(for url: URL) -> URL {
-        directoryURL.appendingPathComponent("\(cacheKey(for: url)).metadata.json")
+        directoryURL.appendingPathComponent("\(cacheKey(for: url)).\(Constants.metadataFileExtension)")
     }
 
     func cacheKey(for url: URL) -> String {
         let digest = SHA256.hash(data: Data(url.absoluteString.utf8))
         return digest.map { String(format: "%02x", $0) }.joined()
+    }
+}
+
+// MARK: - Constants
+
+private extension DiskImageCache {
+    enum Constants {
+        static let cacheDirectoryName = "ImageLoadingKit"
+        static let dataFileExtension = "data"
+        static let metadataFileExtension = "metadata.json"
     }
 }

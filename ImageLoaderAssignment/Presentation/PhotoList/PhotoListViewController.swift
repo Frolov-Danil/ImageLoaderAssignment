@@ -7,7 +7,7 @@ final class PhotoListViewController: UIViewController {
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private let emptyStateLabel = UILabel()
 
-    private var photos: [PhotoCellViewModel] = []
+    private var photos: [PhotoCellViewState] = []
 
     init(viewModel: PhotoListViewModel) {
         self.viewModel = viewModel

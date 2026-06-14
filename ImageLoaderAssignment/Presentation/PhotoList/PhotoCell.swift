@@ -1,6 +1,12 @@
 import ImageLoadingKit
 import UIKit
 
+struct PhotoCellViewState: Equatable {
+    let id: String
+    let url: URL
+    let subtitle: String
+}
+
 final class PhotoCell: UITableViewCell {
     private let thumbnailImageView = AsyncImageView()
     private let idLabel = UILabel()
@@ -26,11 +32,11 @@ final class PhotoCell: UITableViewCell {
         urlLabel.text = nil
     }
 
-    func configure(with viewModel: PhotoCellViewModel) {
-        idLabel.text = viewModel.id
-        urlLabel.text = viewModel.subtitle
+    func configure(with viewState: PhotoCellViewState) {
+        idLabel.text = viewState.id
+        urlLabel.text = viewState.subtitle
         thumbnailImageView.setImage(
-            from: viewModel.url,
+            from: viewState.url,
             placeholder: Constants.placeholderImage
         )
     }

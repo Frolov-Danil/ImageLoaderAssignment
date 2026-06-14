@@ -40,8 +40,8 @@ final class PhotoListViewModel {
                     return
                 }
 
-                let cellViewModels = makeCellViewModels(from: photos)
-                onStateChange?(cellViewModels.isEmpty ? .empty : .content(cellViewModels))
+                let cellViewStates = makeCellViewStates(from: photos)
+                onStateChange?(cellViewStates.isEmpty ? .empty : .content(cellViewStates))
             } catch {
                 guard !Task.isCancelled else {
                     return
@@ -74,9 +74,9 @@ final class PhotoListViewModel {
 // MARK: - Private
 
 private extension PhotoListViewModel {
-    func makeCellViewModels(from photos: [Photo]) -> [PhotoCellViewModel] {
+    func makeCellViewStates(from photos: [Photo]) -> [PhotoCellViewState] {
         photos.map {
-            PhotoCellViewModel(
+            PhotoCellViewState(
                 id: $0.id,
                 url: $0.url,
                 subtitle: $0.url.absoluteString

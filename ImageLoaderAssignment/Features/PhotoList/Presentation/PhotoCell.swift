@@ -8,20 +8,63 @@ struct PhotoCellViewState: Equatable {
 }
 
 final class PhotoCell: UITableViewCell {
-    private let thumbnailImageView = AsyncImageView()
-    private let idLabel = UILabel()
-    private let urlLabel = UILabel()
-    private let textStackView = UIStackView()
-    private let containerStackView = UIStackView()
+    private let thumbnailImageView: AsyncImageView = {
+        let imageView = AsyncImageView(
+            url: nil,
+            placeholder: Constants.placeholderImage
+        )
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = .tertiarySystemFill
+        imageView.tintColor = .tertiaryLabel
+        imageView.layer.cornerRadius = Constants.thumbnailCornerRadius
+        imageView.layer.masksToBounds = true
+        return imageView
+    }()
+
+    private let idLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .headline)
+        label.textColor = .label
+        label.numberOfLines = 1
+        label.adjustsFontForContentSizeCategory = true
+        return label
+    }()
+
+    private let urlLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .subheadline)
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 2
+        label.lineBreakMode = .byTruncatingMiddle
+        label.adjustsFontForContentSizeCategory = true
+        return label
+    }()
+
+    private let textStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.spacing = Constants.textSpacing
+        return stackView
+    }()
+
+    private let containerStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.spacing = Constants.contentSpacing
+        return stackView
+    }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        configureView()
+        setupUI()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        configureView()
+        setupUI()
     }
 
     override func prepareForReuse() {
@@ -45,58 +88,34 @@ final class PhotoCell: UITableViewCell {
 // MARK: - Private
 
 private extension PhotoCell {
-    func configureView() {
+    func setupUI() {
+        setupView()
+        setupHierarchy()
+        setupConstraints()
+    }
+
+    func setupView() {
         backgroundColor = .systemBackground
         selectionStyle = .none
         separatorInset = Constants.separatorInset
         contentView.directionalLayoutMargins = Constants.contentMargins
-
-        configureThumbnailImageView()
-        configureLabels()
-        configureStackViews()
     }
 
-    func configureThumbnailImageView() {
-        thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
-        thumbnailImageView.backgroundColor = .tertiarySystemFill
-        thumbnailImageView.tintColor = .tertiaryLabel
-        thumbnailImageView.layer.cornerRadius = Constants.thumbnailCornerRadius
-        thumbnailImageView.layer.masksToBounds = true
-
-        NSLayoutConstraint.activate([
-            thumbnailImageView.widthAnchor.constraint(equalToConstant: Constants.thumbnailSize),
-            thumbnailImageView.heightAnchor.constraint(equalToConstant: Constants.thumbnailSize)
-        ])
-    }
-
-    func configureLabels() {
-        idLabel.font = .preferredFont(forTextStyle: .headline)
-        idLabel.textColor = .label
-        idLabel.numberOfLines = 1
-        idLabel.adjustsFontForContentSizeCategory = true
-
-        urlLabel.font = .preferredFont(forTextStyle: .subheadline)
-        urlLabel.textColor = .secondaryLabel
-        urlLabel.numberOfLines = 2
-        urlLabel.lineBreakMode = .byTruncatingMiddle
-        urlLabel.adjustsFontForContentSizeCategory = true
-    }
-
-    func configureStackViews() {
-        textStackView.axis = .vertical
-        textStackView.alignment = .fill
-        textStackView.spacing = Constants.textSpacing
+    func setupHierarchy() {
         textStackView.addArrangedSubview(idLabel)
         textStackView.addArrangedSubview(urlLabel)
 
-        containerStackView.translatesAutoresizingMaskIntoConstraints = false
-        containerStackView.axis = .horizontal
-        containerStackView.alignment = .center
-        containerStackView.spacing = Constants.contentSpacing
         containerStackView.addArrangedSubview(thumbnailImageView)
         containerStackView.addArrangedSubview(textStackView)
 
         contentView.addSubview(containerStackView)
+    }
+
+    func setupConstraints() {
+        NSLayoutConstraint.activate([
+            thumbnailImageView.widthAnchor.constraint(equalToConstant: Constants.thumbnailSize),
+            thumbnailImageView.heightAnchor.constraint(equalToConstant: Constants.thumbnailSize)
+        ])
 
         NSLayoutConstraint.activate([
             containerStackView.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),

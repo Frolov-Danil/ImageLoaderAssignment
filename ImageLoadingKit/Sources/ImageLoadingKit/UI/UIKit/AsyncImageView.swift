@@ -1,6 +1,6 @@
 import UIKit
 
-/// A UIKit image view that displays remote images using `ImagePipeline`.
+/// A UIKit image view that displays remote images.
 ///
 /// `AsyncImageView` shows a placeholder immediately, downloads the requested
 /// image asynchronously, and updates itself only if it still represents the same
@@ -11,17 +11,17 @@ public final class AsyncImageView: UIImageView {
     private var loadingTask: Task<Void, Never>?
     private var representedURL: URL?
 
-    /// Creates an async image view backed by the shared image pipeline.
-    public init() {
+    /// Creates an async image view that loads a remote image.
+    ///
+    /// - Parameters:
+    ///   - url: The remote image URL to load. Pass `nil` to create the view
+    ///     without starting a request.
+    ///   - placeholder: The image to display while the remote image is loading.
+    public init(url: URL?, placeholder: UIImage? = nil) {
         self.imagePipeline = ImagePipeline.shared
         super.init(frame: .zero)
-        configureView()
-    }
-
-    init(imagePipeline: ImagePipeline) {
-        self.imagePipeline = imagePipeline
-        super.init(frame: .zero)
-        configureView()
+        setupView()
+        loadImage(from: url, placeholder: placeholder)
     }
 
     /// Creates an async image view from data in an unarchiver.
@@ -30,7 +30,7 @@ public final class AsyncImageView: UIImageView {
     public required init?(coder: NSCoder) {
         self.imagePipeline = ImagePipeline.shared
         super.init(coder: coder)
-        configureView()
+        setupView()
     }
 
     deinit {
@@ -39,14 +39,35 @@ public final class AsyncImageView: UIImageView {
 
     /// Loads and displays an image from the specified URL.
     ///
-    /// The placeholder is assigned immediately. Passing `nil` cancels the
-    /// current request, keeps the placeholder as the current image, and clears
-    /// the represented URL.
+    /// The placeholder is assigned immediately and remains visible if loading
+    /// fails.
     ///
     /// - Parameters:
     ///   - url: The remote image URL to load.
     ///   - placeholder: The image to display while the remote image is loading.
-    public func setImage(from url: URL?, placeholder: UIImage? = nil) {
+    public func setImage(from url: URL, placeholder: UIImage? = nil) {
+        loadImage(from: url, placeholder: placeholder)
+    }
+
+    /// Cancels the current image request and clears the represented URL.
+    ///
+    /// Call this method before reusing a cell that owns an `AsyncImageView`.
+    public func cancelLoading() {
+        loadingTask?.cancel()
+        loadingTask = nil
+        representedURL = nil
+    }
+}
+
+// MARK: - Private
+
+private extension AsyncImageView {
+    func setupView() {
+        clipsToBounds = true
+        contentMode = .scaleAspectFill
+    }
+
+    func loadImage(from url: URL?, placeholder: UIImage?) {
         loadingTask?.cancel()
         representedURL = url
         image = placeholder
@@ -68,23 +89,5 @@ public final class AsyncImageView: UIImageView {
                 return
             }
         }
-    }
-
-    /// Cancels the current image request and clears the represented URL.
-    ///
-    /// Call this method before reusing a cell that owns an `AsyncImageView`.
-    public func cancelLoading() {
-        loadingTask?.cancel()
-        loadingTask = nil
-        representedURL = nil
-    }
-}
-
-// MARK: - Private
-
-private extension AsyncImageView {
-    func configureView() {
-        clipsToBounds = true
-        contentMode = .scaleAspectFill
     }
 }

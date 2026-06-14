@@ -1,10 +1,9 @@
 import SwiftUI
 
-/// A SwiftUI view that displays a remote image using `ImagePipeline`.
+/// A SwiftUI view that displays a remote image.
 ///
 /// The view renders the provided placeholder until the image finishes loading.
-/// Loaded images are retrieved through the shared pipeline, so memory and disk
-/// cache behavior matches the UIKit image view.
+/// Loaded images use the same memory and disk cache behavior as the UIKit image view.
 public struct SwiftUIAsyncImageView<Placeholder: View>: View {
     private let url: URL?
     private let placeholder: Placeholder

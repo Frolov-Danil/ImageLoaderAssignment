@@ -9,12 +9,7 @@ enum RootViewControllerFactory {
             photoListURL: AppConfiguration.imageListURL
         )
         let fetchPhotosUseCase = FetchPhotosUseCase(repository: repository)
-        let imageCache = ImageLoadingKitCacheAdapter()
-        let clearImageCacheUseCase = ClearImageCacheUseCase(imageCache: imageCache)
-        let viewModel = PhotoListViewModel(
-            fetchPhotosUseCase: fetchPhotosUseCase,
-            clearImageCacheUseCase: clearImageCacheUseCase
-        )
+        let viewModel = PhotoListViewModel(fetchPhotosUseCase: fetchPhotosUseCase)
         let viewController = PhotoListViewController(viewModel: viewModel)
 
         return UINavigationController(rootViewController: viewController)

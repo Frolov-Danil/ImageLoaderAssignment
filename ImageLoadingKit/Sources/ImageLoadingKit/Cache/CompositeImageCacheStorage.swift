@@ -9,40 +9,40 @@ import Foundation
 ///
 /// Store and invalidation operations are mirrored to both cache layers, keeping
 /// memory and disk state consistent.
-final class CompositeImageCache: ImageCacheProtocol {
-    private let memoryCache: ImageCacheProtocol
-    private let diskCache: ImageCacheProtocol
+final class CompositeImageCacheStorage: ImageCacheStorageProtocol {
+    private let memoryStorage: ImageCacheStorageProtocol
+    private let diskStorage: ImageCacheStorageProtocol
 
-    init(memoryCache: ImageCacheProtocol, diskCache: ImageCacheProtocol) {
-        self.memoryCache = memoryCache
-        self.diskCache = diskCache
+    init(memoryStorage: ImageCacheStorageProtocol, diskStorage: ImageCacheStorageProtocol) {
+        self.memoryStorage = memoryStorage
+        self.diskStorage = diskStorage
     }
 
     func cachedImage(for url: URL, now: Date) async -> CachedImage? {
-        if let cachedImage = await memoryCache.cachedImage(for: url, now: now) {
+        if let cachedImage = await memoryStorage.cachedImage(for: url, now: now) {
             return cachedImage
         }
 
-        guard let cachedImage = await diskCache.cachedImage(for: url, now: now) else {
+        guard let cachedImage = await diskStorage.cachedImage(for: url, now: now) else {
             return nil
         }
 
-        await memoryCache.store(cachedImage, for: url)
+        await memoryStorage.store(cachedImage, for: url)
         return cachedImage
     }
 
     func store(_ cachedImage: CachedImage, for url: URL) async {
-        await memoryCache.store(cachedImage, for: url)
-        await diskCache.store(cachedImage, for: url)
+        await memoryStorage.store(cachedImage, for: url)
+        await diskStorage.store(cachedImage, for: url)
     }
 
     func removeImage(for url: URL) async {
-        await memoryCache.removeImage(for: url)
-        await diskCache.removeImage(for: url)
+        await memoryStorage.removeImage(for: url)
+        await diskStorage.removeImage(for: url)
     }
 
     func removeAllImages() async {
-        await memoryCache.removeAllImages()
-        await diskCache.removeAllImages()
+        await memoryStorage.removeAllImages()
+        await diskStorage.removeAllImages()
     }
 }

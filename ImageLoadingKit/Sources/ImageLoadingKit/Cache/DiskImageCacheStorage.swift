@@ -1,18 +1,14 @@
 import CryptoKit
 import Foundation
 
-final class DiskImageCache: ImageCacheProtocol {
+final class DiskImageCacheStorage: ImageCacheStorageProtocol {
     private let directoryURL: URL
-    private let fileManager: FileManager
+    private let fileManager = FileManager.default
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
-    init(
-        directoryURL: URL? = nil,
-        fileManager: FileManager = .default
-    ) {
-        self.fileManager = fileManager
-        self.directoryURL = directoryURL ?? fileManager
+    init() {
+        self.directoryURL = fileManager
             .urls(for: .cachesDirectory, in: .userDomainMask)[0]
             .appendingPathComponent(Constants.cacheDirectoryName, isDirectory: true)
     }
@@ -55,7 +51,7 @@ final class DiskImageCache: ImageCacheProtocol {
 
 // MARK: - Private
 
-private extension DiskImageCache {
+private extension DiskImageCacheStorage {
     func metadata(for url: URL) -> CachedImage.Metadata? {
         guard let data = try? Data(contentsOf: metadataFileURL(for: url)) else {
             return nil
@@ -80,7 +76,7 @@ private extension DiskImageCache {
 
 // MARK: - Constants
 
-private extension DiskImageCache {
+private extension DiskImageCacheStorage {
     enum Constants {
         static let cacheDirectoryName = "ImageLoadingKit"
         static let dataFileExtension = "data"

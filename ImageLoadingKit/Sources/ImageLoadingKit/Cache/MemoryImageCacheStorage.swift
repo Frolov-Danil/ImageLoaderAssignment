@@ -1,6 +1,6 @@
 import Foundation
 
-final class MemoryImageCache: ImageCacheProtocol {
+final class MemoryImageCacheStorage: ImageCacheStorageProtocol {
     private let cache = NSCache<NSURL, CachedImageBox>()
 
     func cachedImage(for url: URL, now: Date) async -> CachedImage? {

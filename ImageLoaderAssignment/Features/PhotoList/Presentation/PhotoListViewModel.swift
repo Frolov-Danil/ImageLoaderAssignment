@@ -1,4 +1,5 @@
 import Foundation
+import ImageLoadingKit
 
 @MainActor
 final class PhotoListViewModel {
@@ -6,17 +7,12 @@ final class PhotoListViewModel {
     var onCacheCleared: ((String) -> Void)?
 
     private let fetchPhotosUseCase: FetchPhotosUseCase
-    private let clearImageCacheUseCase: ClearImageCacheUseCase
 
     private var loadTask: Task<Void, Never>?
     private var clearCacheTask: Task<Void, Never>?
 
-    init(
-        fetchPhotosUseCase: FetchPhotosUseCase,
-        clearImageCacheUseCase: ClearImageCacheUseCase
-    ) {
+    init(fetchPhotosUseCase: FetchPhotosUseCase) {
         self.fetchPhotosUseCase = fetchPhotosUseCase
-        self.clearImageCacheUseCase = clearImageCacheUseCase
     }
 
     deinit {
@@ -65,7 +61,7 @@ final class PhotoListViewModel {
                 return
             }
 
-            await clearImageCacheUseCase.execute()
+            await ImageCache.invalidate()
 
             guard !Task.isCancelled else {
                 return

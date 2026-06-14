@@ -15,12 +15,6 @@ Small iOS assignment project for downloading, caching, and displaying remote ima
 - The cache uses memory + disk layers and stores disk metadata with a default 4-hour expiration.
 - Manual cache invalidation clears memory, disk, and matching in-flight requests.
 
-## Git Flow
-
-- `main` keeps the stable assignment state.
-- `develop` is the integration branch.
-- Branch prefixes are chosen by change type: `feature/*`, `refactor/*`, `fix/*`, or `chore/*`.
-
 ## Notes
 
 The assignment archive did not include a JSON endpoint, so the demo app uses a bundled `photos.json` file with the expected `id` and `url` schema. `APIClient` still supports remote HTTP JSON sources, and the data source remains isolated in `AppConfiguration.imageListURL`.

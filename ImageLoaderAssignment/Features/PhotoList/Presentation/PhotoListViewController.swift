@@ -3,9 +3,35 @@ import UIKit
 final class PhotoListViewController: UIViewController {
     private let viewModel: PhotoListViewModel
 
-    private let tableView = UITableView(frame: .zero, style: .plain)
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
-    private let emptyStateLabel = UILabel()
+    private let tableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = Constants.estimatedRowHeight
+        tableView.backgroundColor = .systemBackground
+        tableView.separatorInset = Constants.separatorInset
+        tableView.tableFooterView = UIView()
+        tableView.register(PhotoCell.self, forCellReuseIdentifier: Constants.cellIdentifier)
+        return tableView
+    }()
+
+    private let activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
+    }()
+
+    private let emptyStateLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .preferredFont(forTextStyle: .body)
+        label.textAlignment = .center
+        label.textColor = .secondaryLabel
+        label.numberOfLines = 0
+        label.isHidden = true
+        return label
+    }()
 
     private var photos: [PhotoCellViewState] = []
 
@@ -21,7 +47,7 @@ final class PhotoListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
+        setupUI()
         bindViewModel()
         viewModel.loadPhotos()
     }
@@ -30,12 +56,22 @@ final class PhotoListViewController: UIViewController {
 // MARK: - Private
 
 private extension PhotoListViewController {
-    func configureView() {
+    func setupUI() {
+        setupView()
+        setupNavigationItem()
+        setupHierarchy()
+        setupConstraints()
+    }
+
+    func setupView() {
         title = Constants.title
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .automatic
+        tableView.dataSource = self
+    }
 
+    func setupNavigationItem() {
+        navigationItem.largeTitleDisplayMode = .automatic
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: Constants.clearCacheImageName),
             style: .plain,
@@ -43,53 +79,26 @@ private extension PhotoListViewController {
             action: #selector(didTapClearCacheButton)
         )
         navigationItem.rightBarButtonItem?.accessibilityLabel = Constants.clearCacheAccessibilityLabel
-
-        configureTableView()
-        configureActivityIndicator()
-        configureEmptyStateLabel()
     }
 
-    func configureTableView() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.dataSource = self
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = Constants.estimatedRowHeight
-        tableView.backgroundColor = .systemBackground
-        tableView.separatorInset = Constants.separatorInset
-        tableView.tableFooterView = UIView()
-        tableView.register(PhotoCell.self, forCellReuseIdentifier: Constants.cellIdentifier)
-
+    func setupHierarchy() {
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
+        view.addSubview(emptyStateLabel)
+    }
 
+    func setupConstraints() {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-
-    func configureActivityIndicator() {
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.hidesWhenStopped = true
-
-        view.addSubview(activityIndicator)
 
         NSLayoutConstraint.activate([
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-    }
-
-    func configureEmptyStateLabel() {
-        emptyStateLabel.translatesAutoresizingMaskIntoConstraints = false
-        emptyStateLabel.font = .preferredFont(forTextStyle: .body)
-        emptyStateLabel.textAlignment = .center
-        emptyStateLabel.textColor = .secondaryLabel
-        emptyStateLabel.numberOfLines = 0
-        emptyStateLabel.isHidden = true
-
-        view.addSubview(emptyStateLabel)
 
         NSLayoutConstraint.activate([
             emptyStateLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),

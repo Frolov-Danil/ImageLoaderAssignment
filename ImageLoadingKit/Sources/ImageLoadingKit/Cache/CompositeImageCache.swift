@@ -9,31 +9,31 @@ final class CompositeImageCache: ImageCache {
         self.secondaryCache = secondaryCache
     }
 
-    func data(for url: URL) async -> Data? {
-        if let data = await primaryCache.data(for: url) {
-            return data
+    func cachedImage(for url: URL, now: Date) async -> CachedImage? {
+        if let cachedImage = await primaryCache.cachedImage(for: url, now: now) {
+            return cachedImage
         }
 
-        guard let data = await secondaryCache.data(for: url) else {
+        guard let cachedImage = await secondaryCache.cachedImage(for: url, now: now) else {
             return nil
         }
 
-        await primaryCache.store(data, for: url)
-        return data
+        await primaryCache.store(cachedImage, for: url)
+        return cachedImage
     }
 
-    func store(_ data: Data, for url: URL) async {
-        await primaryCache.store(data, for: url)
-        await secondaryCache.store(data, for: url)
+    func store(_ cachedImage: CachedImage, for url: URL) async {
+        await primaryCache.store(cachedImage, for: url)
+        await secondaryCache.store(cachedImage, for: url)
     }
 
-    func removeData(for url: URL) async {
-        await primaryCache.removeData(for: url)
-        await secondaryCache.removeData(for: url)
+    func removeImage(for url: URL) async {
+        await primaryCache.removeImage(for: url)
+        await secondaryCache.removeImage(for: url)
     }
 
-    func removeAllData() async {
-        await primaryCache.removeAllData()
-        await secondaryCache.removeAllData()
+    func removeAllImages() async {
+        await primaryCache.removeAllImages()
+        await secondaryCache.removeAllImages()
     }
 }

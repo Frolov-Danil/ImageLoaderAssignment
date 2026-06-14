@@ -8,7 +8,9 @@ Small iOS assignment project for downloading, caching, and displaying remote ima
 - `Scenes/ImagesList` uses a lightweight Clean Swift flow: ViewController -> Interactor -> Worker -> Presenter -> ViewController.
 - UIKit is used for the example app to keep the Clean Swift boundaries explicit.
 - UIKit and SwiftUI entry points are exposed by the package.
-- The current cache uses memory + disk layers. TTL and request deduplication will be added in the next implementation steps.
+- The image pipeline is actor-isolated and deduplicates concurrent requests for the same URL.
+- The cache uses memory + disk layers and stores disk metadata with a default 4-hour expiration.
+- Manual cache invalidation clears memory, disk, and matching in-flight requests.
 
 ## Git Flow
 

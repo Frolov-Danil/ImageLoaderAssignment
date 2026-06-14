@@ -4,6 +4,8 @@ import Foundation
 final class DiskImageCache: ImageCache {
     private let directoryURL: URL
     private let fileManager: FileManager
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
 
     init(
         directoryURL: URL? = nil,
@@ -15,32 +17,55 @@ final class DiskImageCache: ImageCache {
             .appendingPathComponent("ImageLoadingKit", isDirectory: true)
     }
 
-    func data(for url: URL) async -> Data? {
-        try? Data(contentsOf: fileURL(for: url))
+    func cachedImage(for url: URL, now: Date) async -> CachedImage? {
+        guard let metadata = metadata(for: url),
+              metadata.isValid(at: now),
+              let data = try? Data(contentsOf: dataFileURL(for: url)) else {
+            await removeImage(for: url)
+            return nil
+        }
+
+        return CachedImage(data: data, metadata: metadata)
     }
 
-    func store(_ data: Data, for url: URL) async {
+    func store(_ cachedImage: CachedImage, for url: URL) async {
         do {
             try fileManager.createDirectory(
                 at: directoryURL,
                 withIntermediateDirectories: true
             )
-            try data.write(to: fileURL(for: url), options: .atomic)
+            try cachedImage.data.write(to: dataFileURL(for: url), options: .atomic)
+
+            let metadataData = try encoder.encode(cachedImage.metadata)
+            try metadataData.write(to: metadataFileURL(for: url), options: .atomic)
         } catch {
             return
         }
     }
 
-    func removeData(for url: URL) async {
-        try? fileManager.removeItem(at: fileURL(for: url))
+    func removeImage(for url: URL) async {
+        try? fileManager.removeItem(at: dataFileURL(for: url))
+        try? fileManager.removeItem(at: metadataFileURL(for: url))
     }
 
-    func removeAllData() async {
+    func removeAllImages() async {
         try? fileManager.removeItem(at: directoryURL)
     }
 
-    private func fileURL(for url: URL) -> URL {
-        directoryURL.appendingPathComponent(cacheKey(for: url))
+    private func metadata(for url: URL) -> CachedImageMetadata? {
+        guard let data = try? Data(contentsOf: metadataFileURL(for: url)) else {
+            return nil
+        }
+
+        return try? decoder.decode(CachedImageMetadata.self, from: data)
+    }
+
+    private func dataFileURL(for url: URL) -> URL {
+        directoryURL.appendingPathComponent("\(cacheKey(for: url)).data")
+    }
+
+    private func metadataFileURL(for url: URL) -> URL {
+        directoryURL.appendingPathComponent("\(cacheKey(for: url)).metadata.json")
     }
 
     private func cacheKey(for url: URL) -> String {

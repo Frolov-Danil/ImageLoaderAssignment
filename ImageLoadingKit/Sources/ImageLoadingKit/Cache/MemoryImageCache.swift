@@ -1,21 +1,38 @@
 import Foundation
 
 final class MemoryImageCache: ImageCache {
-    private let cache = NSCache<NSURL, NSData>()
+    private let cache = NSCache<NSURL, CachedImageBox>()
 
-    func data(for url: URL) async -> Data? {
-        cache.object(forKey: url as NSURL) as Data?
+    func cachedImage(for url: URL, now: Date) async -> CachedImage? {
+        guard let cachedImage = cache.object(forKey: url as NSURL)?.cachedImage else {
+            return nil
+        }
+
+        guard cachedImage.isValid(at: now) else {
+            await removeImage(for: url)
+            return nil
+        }
+
+        return cachedImage
     }
 
-    func store(_ data: Data, for url: URL) async {
-        cache.setObject(data as NSData, forKey: url as NSURL)
+    func store(_ cachedImage: CachedImage, for url: URL) async {
+        cache.setObject(CachedImageBox(cachedImage), forKey: url as NSURL)
     }
 
-    func removeData(for url: URL) async {
+    func removeImage(for url: URL) async {
         cache.removeObject(forKey: url as NSURL)
     }
 
-    func removeAllData() async {
+    func removeAllImages() async {
         cache.removeAllObjects()
+    }
+}
+
+private final class CachedImageBox {
+    let cachedImage: CachedImage
+
+    init(_ cachedImage: CachedImage) {
+        self.cachedImage = cachedImage
     }
 }

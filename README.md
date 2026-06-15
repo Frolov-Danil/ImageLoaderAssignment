@@ -15,6 +15,18 @@ Small iOS assignment project for downloading, caching, and displaying remote ima
 - The cache uses memory + disk layers and stores disk metadata with a default 4-hour expiration.
 - Manual cache invalidation clears memory, disk, and matching in-flight requests.
 
+## Deployment Target
+
+The example app targets iOS 18.0 intentionally as a modern baseline for the demo application.
+
+The reusable `ImageLoadingKit` package supports iOS 15.0+, so it can be integrated into apps with broader deployment requirements.
+
+## Cache Invalidation Behavior
+
+The "Clear Cache" button invalidates both memory and disk cache and shows a confirmation alert.
+
+Currently visible images are not forcefully reloaded on purpose. This makes it possible to verify the persistence scenario manually: after clearing the cache, relaunch the app and observe that images are downloaded again instead of being restored from disk cache.
+
 ## Notes
 
 The assignment archive did not include a JSON endpoint, so the demo app uses a bundled `photos.json` file with the expected `id` and `url` schema. `APIClient` still supports remote HTTP JSON sources, and the data source remains isolated in `AppConfiguration.imageListURL`.

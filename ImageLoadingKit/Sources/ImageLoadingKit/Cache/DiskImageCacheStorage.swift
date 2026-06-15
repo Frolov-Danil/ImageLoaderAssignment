@@ -13,6 +13,10 @@ final class DiskImageCacheStorage: ImageCacheStorageProtocol {
             .appendingPathComponent(Constants.cacheDirectoryName, isDirectory: true)
     }
 
+    init(directoryURL: URL) {
+        self.directoryURL = directoryURL
+    }
+
     func cachedImage(for url: URL, now: Date) async -> CachedImage? {
         guard let metadata = metadata(for: url),
               metadata.isValid(at: now),

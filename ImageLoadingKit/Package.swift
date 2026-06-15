@@ -14,6 +14,10 @@ let package = Package(
         )
     ],
     targets: [
-        .target(name: "ImageLoadingKit")
+        .target(name: "ImageLoadingKit"),
+        .testTarget(
+            name: "ImageLoadingKitTests",
+            dependencies: ["ImageLoadingKit"]
+        )
     ]
 )

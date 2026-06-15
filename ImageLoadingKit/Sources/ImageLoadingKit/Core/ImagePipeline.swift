@@ -21,6 +21,14 @@ actor ImagePipeline {
         )
     }
 
+    init(
+        downloader: ImageDownloadingProtocol,
+        cache: ImageCacheStorageProtocol
+    ) {
+        self.downloader = downloader
+        self.cache = cache
+    }
+
     func image(for url: URL) async throws -> UIImage {
         let now = Date()
 

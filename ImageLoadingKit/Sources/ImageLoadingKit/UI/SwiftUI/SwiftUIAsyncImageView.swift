@@ -50,6 +50,12 @@ private extension SwiftUIAsyncImageView {
             return
         }
 
-        image = try? await ImagePipeline.shared.image(for: url)
+        guard let loadedImage = try? await ImagePipeline.shared.image(for: url),
+              !Task.isCancelled,
+              self.url == url else {
+            return
+        }
+
+        image = loadedImage
     }
 }

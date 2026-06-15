@@ -14,13 +14,13 @@ The pipeline checks memory cache first, then disk cache, and only starts a netwo
 - Keeps disk cache available across app launches.
 - Expires cached images after 4 hours by default.
 - Deduplicates concurrent requests for the same URL.
-- Supports manual cache invalidation.
+- Supports manual cache invalidation for all images or a specific URL.
 - Includes UIKit and SwiftUI image views.
 
 ## Requirements
 
 - iOS 15.0+
-- Swift 5.9+
+- Swift 6.0+
 
 ## UIKit
 
@@ -63,9 +63,17 @@ Clear the entire cache:
 await ImageCache.invalidate()
 ```
 
+Clear a single cached image:
+
+```swift
+await ImageCache.invalidate(imageURL)
+```
+
 ## Cache Lifetime
 
 Cached images are valid for 4 hours. This is an internal cache policy of the library.
+
+Disk cache is stored in the app Caches directory and survives normal app relaunches.
 
 ## Error Handling
 
@@ -78,3 +86,4 @@ UIKit and SwiftUI views keep showing the provided placeholder if loading fails.
 - `AsyncImageView.cancelLoading()`
 - `SwiftUIAsyncImageView.init(url:placeholder:)`
 - `ImageCache.invalidate()`
+- `ImageCache.invalidate(_:)`

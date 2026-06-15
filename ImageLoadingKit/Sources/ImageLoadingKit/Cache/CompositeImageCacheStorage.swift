@@ -9,7 +9,7 @@ import Foundation
 ///
 /// Store and invalidation operations are mirrored to both cache layers, keeping
 /// memory and disk state consistent.
-final class CompositeImageCacheStorage: ImageCacheStorageProtocol {
+actor CompositeImageCacheStorage: ImageCacheStorageProtocol {
     private let memoryStorage: ImageCacheStorageProtocol
     private let diskStorage: ImageCacheStorageProtocol
 

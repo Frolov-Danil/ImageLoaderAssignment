@@ -60,6 +60,12 @@ actor ImagePipeline {
         inFlightTasks.removeAll()
         await cache.removeAllImages()
     }
+
+    func invalidateCache(for url: URL) async {
+        inFlightTasks[url]?.task.cancel()
+        inFlightTasks[url] = nil
+        await cache.removeImage(for: url)
+    }
 }
 
 // MARK: - Private

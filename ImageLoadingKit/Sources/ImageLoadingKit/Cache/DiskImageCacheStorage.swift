@@ -1,7 +1,7 @@
 import CryptoKit
 import Foundation
 
-final class DiskImageCacheStorage: ImageCacheStorageProtocol {
+actor DiskImageCacheStorage: ImageCacheStorageProtocol {
     private let directoryURL: URL
     private let fileManager = FileManager.default
     private let decoder = JSONDecoder()

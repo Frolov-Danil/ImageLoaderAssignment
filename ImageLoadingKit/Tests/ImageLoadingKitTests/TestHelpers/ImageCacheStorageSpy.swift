@@ -44,6 +44,10 @@ actor ImageCacheStorageSpy: ImageCacheStorageProtocol {
         removeImageCalls.count
     }
 
+    func removedURLs() -> [URL] {
+        removeImageCalls
+    }
+
     func removeAllImagesCallCount() -> Int {
         removeAllImagesCallsCount
     }

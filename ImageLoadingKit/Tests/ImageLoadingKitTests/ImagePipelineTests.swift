@@ -83,4 +83,16 @@ struct ImagePipelineTests {
 
         #expect(await cache.removeAllImagesCallCount() == 1)
     }
+
+    @Test("Invalidation removes cached image for URL")
+    func invalidationRemovesCachedImageForURL() async {
+        let cache = ImageCacheStorageSpy()
+        let downloader = ImageDownloaderSpy(data: TestValues.pngData)
+        let pipeline = ImagePipeline(downloader: downloader, cache: cache)
+
+        await pipeline.invalidateCache(for: TestValues.url)
+
+        #expect(await cache.removeImageCallCount() == 1)
+        #expect(await cache.removedURLs() == [TestValues.url])
+    }
 }

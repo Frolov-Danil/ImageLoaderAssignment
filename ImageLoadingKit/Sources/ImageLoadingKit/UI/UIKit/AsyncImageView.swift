@@ -6,6 +6,7 @@ import UIKit
 /// image asynchronously, and updates itself only if it still represents the same
 /// URL when the request finishes. This makes the view safe to use in reusable
 /// cells.
+@MainActor
 public final class AsyncImageView: UIImageView {
     private let imagePipeline: ImagePipeline
     private var loadingTask: Task<Void, Never>?
@@ -31,6 +32,17 @@ public final class AsyncImageView: UIImageView {
         self.imagePipeline = ImagePipeline.shared
         super.init(coder: coder)
         setupView()
+    }
+
+    init(
+        url: URL?,
+        placeholder: UIImage? = nil,
+        imagePipeline: ImagePipeline
+    ) {
+        self.imagePipeline = imagePipeline
+        super.init(frame: .zero)
+        setupView()
+        loadImage(from: url, placeholder: placeholder)
     }
 
     deinit {

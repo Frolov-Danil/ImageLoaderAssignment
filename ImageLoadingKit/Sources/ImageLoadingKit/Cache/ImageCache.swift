@@ -8,4 +8,11 @@ public enum ImageCache {
     public static func invalidate() async {
         await ImagePipeline.shared.invalidateCache()
     }
+
+    /// Clears the cached image for the specified URL from memory and disk.
+    ///
+    /// An in-flight request for the same URL is cancelled as part of invalidation.
+    public static func invalidate(_ url: URL) async {
+        await ImagePipeline.shared.invalidateCache(for: url)
+    }
 }

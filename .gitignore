@@ -9,6 +9,7 @@ xcuserdata/
 
 # Swift Package Manager
 .swiftpm/
+.build/
 
 # Dependency managers
 Pods/

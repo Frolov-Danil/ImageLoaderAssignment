@@ -3,7 +3,11 @@ import Foundation
 final class URLSessionImageDownloader: ImageDownloadingProtocol {
     private let session: URLSession
 
-    init(session: URLSession = .shared) {
+    init() {
+        self.session = URLSessionImageDownloader.makeEphemeralSession()
+    }
+
+    init(session: URLSession) {
         self.session = session
     }
 
@@ -22,6 +26,14 @@ final class URLSessionImageDownloader: ImageDownloadingProtocol {
 // MARK: - Constants
 
 private extension URLSessionImageDownloader {
+    static func makeEphemeralSession() -> URLSession {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        configuration.urlCache = nil
+
+        return URLSession(configuration: configuration)
+    }
+
     enum Constants {
         static let successStatusCodes = 200..<300
     }
